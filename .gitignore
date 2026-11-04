@@ -1,0 +1,64 @@
+# Internal/private task prompts
+prompts/
+
+# Secrets and local environment configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+kaggle.json
+
+# Python environments and caches
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Jupyter transient files
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Build and packaging output
+build/
+dist/
+*.egg-info/
+
+# Logs, temporary files, and local scratch space
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+tmp/
+temp/
+.cache/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Locally trained binary models can be large and reproducible
+*.joblib
+*.pkl
+*.pickle
+
+# Required model deliverable for each member
+!artifacts/*/best_model.joblib
+

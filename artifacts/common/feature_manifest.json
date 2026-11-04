@@ -1,0 +1,135 @@
+{
+  "features": [
+    "Pclass",
+    "Sex",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Fare",
+    "FamilySize",
+    "Embarked_C",
+    "Embarked_Q",
+    "Embarked_S",
+    "Title_Mr",
+    "Title_Miss",
+    "Title_Mrs",
+    "Title_Master",
+    "Title_Rare",
+    "FamilyCategory_Single",
+    "FamilyCategory_Small",
+    "FamilyCategory_Medium",
+    "FamilyCategory_Large",
+    "AgeBand_0",
+    "AgeBand_1",
+    "AgeBand_2",
+    "AgeBand_3",
+    "AgeBand_4",
+    "FareBand_0",
+    "FareBand_1",
+    "FareBand_2",
+    "FareBand_3"
+  ],
+  "dtypes": {
+    "Pclass": "int64",
+    "Sex": "int64",
+    "Age": "float64",
+    "SibSp": "int64",
+    "Parch": "int64",
+    "Fare": "float64",
+    "FamilySize": "int64",
+    "Embarked_C": "int64",
+    "Embarked_Q": "int64",
+    "Embarked_S": "int64",
+    "Title_Mr": "int64",
+    "Title_Miss": "int64",
+    "Title_Mrs": "int64",
+    "Title_Master": "int64",
+    "Title_Rare": "int64",
+    "FamilyCategory_Single": "int64",
+    "FamilyCategory_Small": "int64",
+    "FamilyCategory_Medium": "int64",
+    "FamilyCategory_Large": "int64",
+    "AgeBand_0": "int64",
+    "AgeBand_1": "int64",
+    "AgeBand_2": "int64",
+    "AgeBand_3": "int64",
+    "AgeBand_4": "int64",
+    "FareBand_0": "int64",
+    "FareBand_1": "int64",
+    "FareBand_2": "int64",
+    "FareBand_3": "int64"
+  },
+  "target": "Survived",
+  "random_state": 42,
+  "split": {
+    "method": "train_test_split",
+    "test_size": 0.2,
+    "stratify": "Survived",
+    "random_state": 42
+  },
+  "cv": {
+    "method": "StratifiedKFold",
+    "n_splits": 10,
+    "shuffle": true,
+    "random_state": 42,
+    "primary_metric": "accuracy",
+    "additional_metrics": [
+      "precision",
+      "recall",
+      "f1",
+      "roc_auc",
+      "confusion_matrix"
+    ]
+  },
+  "feature_engineering": {
+    "PassengerId": "kept separately; excluded from features",
+    "Embarked": "train mode=S; train categories and one-hot",
+    "Fare": "train median=14.4542; raw plus quantile band",
+    "Age": "train Sex×Pclass medians with global fallback=28.0; raw plus quantile band",
+    "Title": "extract from Name; normalize Mlle/Ms/Mme; uncommon titles -> Rare; one-hot",
+    "FamilySize": "SibSp + Parch + 1",
+    "FamilyCategory": "Single=1, Small=2, Medium=3–4, Large>=5; one-hot",
+    "dropped": [
+      "Name",
+      "Ticket",
+      "Cabin"
+    ],
+    "scaling": "none in shared artifacts"
+  },
+  "learned_train_statistics": {
+    "embarked_mode": "S",
+    "fare_median": 14.4542,
+    "global_age_median": 28.0,
+    "age_group_medians": {
+      "female|1": 35.0,
+      "female|2": 28.0,
+      "female|3": 21.5,
+      "male|1": 40.0,
+      "male|2": 30.0,
+      "male|3": 25.0
+    },
+    "age_band_edges": [
+      "-Infinity",
+      20.0,
+      25.0,
+      30.0,
+      40.0,
+      "Infinity"
+    ],
+    "fare_band_edges": [
+      "-Infinity",
+      7.9104,
+      14.4542,
+      31.0,
+      "Infinity"
+    ]
+  },
+  "library_versions": {
+    "python": "3.14.7",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0",
+    "matplotlib": "3.11.2",
+    "seaborn": "0.13.2",
+    "scikit_learn": "1.9.1"
+  }
+}
