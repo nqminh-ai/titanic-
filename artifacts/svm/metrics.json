@@ -1,0 +1,29 @@
+{
+  "model_name": "Support Vector Machine (SVC)",
+  "random_state": 42,
+  "cv_folds": 10,
+  "baseline_cv_mean": 0.8258411580594679,
+  "baseline_cv_std": 0.0328398603198421,
+  "best_cv_score": 0.8300273865414711,
+  "best_params": {
+    "C": 100,
+    "class_weight": null,
+    "gamma": 0.001,
+    "kernel": "rbf"
+  },
+  "validation_accuracy": 0.8435754189944135,
+  "validation_precision": 0.8253968253968254,
+  "validation_recall": 0.7536231884057971,
+  "validation_f1": 0.7878787878787878,
+  "validation_roc_auc": 0.8660079051383399,
+  "support_vectors_per_class": [
+    150,
+    137
+  ],
+  "total_support_vectors": 287,
+  "full_model_support_vectors": [
+    191,
+    171
+  ],
+  "tuning_time_seconds": 41.23
+}
