@@ -1,0 +1,148 @@
+{
+  "model_name": "DecisionTreeClassifier",
+  "random_state": 42,
+  "cv_folds": 10,
+  "primary_metric": "accuracy",
+  "grid_candidates": 2880,
+  "grid_total_fits": 28800,
+  "tuning_seconds": 250.21953980000035,
+  "baseline_cv_mean": 0.7892801251956182,
+  "baseline_cv_std": 0.032358553949836756,
+  "baseline_cv_train_mean": 0.9854863007020279,
+  "baseline_train_accuracy": 0.9845505617977528,
+  "baseline_validation_accuracy": 0.8156424581005587,
+  "baseline_validation_precision": 0.7571428571428571,
+  "baseline_validation_recall": 0.7681159420289855,
+  "baseline_validation_f1": 0.762589928057554,
+  "baseline_validation_roc_auc": 0.8019762845849802,
+  "baseline_confusion_matrix": [
+    [
+      93,
+      17
+    ],
+    [
+      16,
+      53
+    ]
+  ],
+  "baseline_classification_report": {
+    "0": {
+      "precision": 0.8532110091743119,
+      "recall": 0.8454545454545455,
+      "f1-score": 0.8493150684931506,
+      "support": 110.0
+    },
+    "1": {
+      "precision": 0.7571428571428571,
+      "recall": 0.7681159420289855,
+      "f1-score": 0.762589928057554,
+      "support": 69.0
+    },
+    "accuracy": 0.8156424581005587,
+    "macro avg": {
+      "precision": 0.8051769331585845,
+      "recall": 0.8067852437417655,
+      "f1-score": 0.8059524982753523,
+      "support": 179.0
+    },
+    "weighted avg": {
+      "precision": 0.8161791516873266,
+      "recall": 0.8156424581005587,
+      "f1-score": 0.8158847070961888,
+      "support": 179.0
+    }
+  },
+  "best_cv_score": 0.8384389671361502,
+  "best_cv_std": 0.039585541045217824,
+  "best_cv_train_mean": 0.8739089313572542,
+  "best_params": {
+    "class_weight": null,
+    "criterion": "gini",
+    "max_depth": null,
+    "max_features": null,
+    "min_samples_leaf": 8,
+    "min_samples_split": 2
+  },
+  "tuned_train_accuracy": 0.875,
+  "validation_accuracy": 0.8324022346368715,
+  "validation_precision": 0.8,
+  "validation_recall": 0.7536231884057971,
+  "validation_f1": 0.7761194029850746,
+  "validation_roc_auc": 0.8595520421607379,
+  "validation_confusion_matrix": [
+    [
+      97,
+      13
+    ],
+    [
+      17,
+      52
+    ]
+  ],
+  "validation_classification_report": {
+    "0": {
+      "precision": 0.8508771929824561,
+      "recall": 0.8818181818181818,
+      "f1-score": 0.8660714285714286,
+      "support": 110.0
+    },
+    "1": {
+      "precision": 0.8,
+      "recall": 0.7536231884057971,
+      "f1-score": 0.7761194029850746,
+      "support": 69.0
+    },
+    "accuracy": 0.8324022346368715,
+    "macro avg": {
+      "precision": 0.8254385964912281,
+      "recall": 0.8177206851119895,
+      "f1-score": 0.8210954157782516,
+      "support": 179.0
+    },
+    "weighted avg": {
+      "precision": 0.8312653141232971,
+      "recall": 0.8324022346368715,
+      "f1-score": 0.831397184071661,
+      "support": 179.0
+    }
+  },
+  "tree_depth_train_split": 8,
+  "tree_leaves_train_split": 49,
+  "final_tree_depth_full_data": 11,
+  "final_tree_leaves_full_data": 66,
+  "feature_importance": {
+    "Title_Mr": 0.4872638949151885,
+    "Fare": 0.1422447370100383,
+    "Pclass": 0.12029356781966534,
+    "FamilyCategory_Large": 0.06379900126880342,
+    "Age": 0.049365957428440896,
+    "Title_Rare": 0.047569418634852034,
+    "AgeBand_1": 0.04249756727691172,
+    "FareBand_1": 0.01617782896683047,
+    "Embarked_S": 0.00941584398658371,
+    "FareBand_2": 0.009328687976378845,
+    "FamilySize": 0.006067430834576011,
+    "Embarked_C": 0.004016177502397959,
+    "AgeBand_2": 0.0017645104186281473,
+    "FamilyCategory_Single": 0.00019537596070458475,
+    "Title_Miss": 0.0,
+    "SibSp": 0.0,
+    "Sex": 0.0,
+    "Embarked_Q": 0.0,
+    "Parch": 0.0,
+    "Title_Master": 0.0,
+    "AgeBand_0": 0.0,
+    "FamilyCategory_Medium": 0.0,
+    "FamilyCategory_Small": 0.0,
+    "Title_Mrs": 0.0,
+    "AgeBand_4": 0.0,
+    "AgeBand_3": 0.0,
+    "FareBand_0": 0.0,
+    "FareBand_3": 0.0
+  },
+  "overfitting": {
+    "baseline_train_cv_gap": 0.19620617550640973,
+    "tuned_train_cv_gap": 0.035469964221104044,
+    "gap_reduction": 0.16073621128530569
+  }
+}
