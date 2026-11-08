@@ -1,0 +1,44 @@
+{
+  "model_name": "Logistic Regression",
+  "random_state": 42,
+  "cv_folds": 10,
+  "baseline_cv_mean": 0.8215962441314554,
+  "baseline_cv_std": 0.0442163670243864,
+  "best_cv_score": 0.8272300469483568,
+  "best_cv_std": 0.03222381448994784,
+  "best_params": {
+    "C": 0.1,
+    "class_weight": null,
+    "l1_ratio": 1.0,
+    "solver": "liblinear"
+  },
+  "best_penalty": "l1",
+  "validation_accuracy": 0.8379888268156425,
+  "validation_precision": 0.8125,
+  "validation_recall": 0.7536231884057971,
+  "validation_f1": 0.7819548872180451,
+  "validation_roc_auc": 0.8724637681159421,
+  "validation_confusion_matrix": [
+    [
+      98,
+      12
+    ],
+    [
+      17,
+      52
+    ]
+  ],
+  "baseline_validation": {
+    "accuracy": 0.8324022346368715,
+    "precision": 0.8095238095238095,
+    "recall": 0.7391304347826086,
+    "f1": 0.7727272727272727,
+    "roc_auc": 0.8681159420289856
+  },
+  "tuning_time_seconds": 1.86,
+  "n_grid_configs": 26,
+  "score_definition": "predict_proba[:, 1] = P(Survived=1)",
+  "final_model_fit_on": "X_full, y_full",
+  "sklearn_version": "1.9.1",
+  "notes": "sklearn 1.9 deprecates 'penalty': L2 = l1_ratio 0, L1 = l1_ratio 1, no penalty = C=inf (lbfgs)."
+}
