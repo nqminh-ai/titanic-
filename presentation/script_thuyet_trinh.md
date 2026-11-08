@@ -1,12 +1,12 @@
 # Script thuyết trình — Titanic Survival Classification
 
-**Thời lượng dự kiến:** khoảng 22–25 phút cho 31 slide.
+**Thời lượng dự kiến:** khoảng 22–25 phút cho 32 slide.
 **Phân công người nói:**
-- Điều phối: slide 1–12 và 25–31
+- Điều phối: slide 1–12 và 26–32
 - Nguyễn Tấn Dũng: slide 13–15
 - Nguyễn Trọng Hiệp: slide 16–18
 - Nguyễn Quang Minh: slide 19–21
-- Đỗ Trường Sơn: slide 22–24
+- Đỗ Trường Sơn: slide 22–25
 
 **Điều khiển slide:** phím → hoặc Space để sang slide, ← để quay lại, F để toàn màn hình. Các hiệu ứng tự chạy khi vào slide; nên đợi khoảng 1–2 giây cho biểu đồ hiện hết rồi mới nói vào số liệu.
 
@@ -90,29 +90,32 @@ Em xin trình bày Decision Tree. Cây đưa ra một chuỗi câu hỏi có ho�
 Vì một cây fit rất nhanh, em chạy grid lớn nhất nhóm: 2.880 cấu hình nhân 10 fold, tức 28.800 lần fit, mất khoảng 250 giây. Cấu hình tốt nhất không giới hạn độ sâu, nhưng mỗi lá phải có ít nhất 8 mẫu, nên cây tự dừng ở độ sâu 8 với 49 lá. Khi refit trên toàn bộ 891 mẫu, cây sâu 11 tầng và có 66 lá.
 
 ### Slide 24 — Decision Tree: kết quả (~60s)
-Decision Tree có CV cao nhất nhóm, 0,838. Khoảng cách train–CV giảm từ 0,196 xuống 0,036, cho thấy overfit được kiểm soát. Riêng Title_Mr chiếm gần một nửa độ quan trọng, sau đó là Fare và Pclass. Sex có importance bằng 0 không phải vì giới tính không quan trọng, mà vì Title_Mr đã tách giới tính ngay từ nút gốc. Đây là hạn chế của importance dựa trên Gini. Hình bên phải là ba tầng đầu của cây thật.
+Decision Tree có CV cao nhất nhóm, 0,838. Khoảng cách train–CV giảm từ 0,196 xuống 0,036, cho thấy overfit được kiểm soát. Riêng Title_Mr chiếm gần một nửa độ quan trọng, sau đó là Fare và Pclass. Sex có importance bằng 0 không phải vì giới tính không quan trọng, mà vì Title_Mr đã tách giới tính ngay từ nút gốc. Đây là hạn chế của importance dựa trên Gini. Hình bên phải là learning curve: train và CV tiến gần nhau khi tăng số mẫu.
+
+### Slide 25 — Decision Tree: ba tầng đầu của cây (~40s)
+Đây là ba tầng đầu của cây tối ưu, mỗi nút ghi điều kiện chia, Gini, số mẫu và lớp đa số. Màu xanh là nút nghiêng về "sống", màu cam là nghiêng về "không sống"; màu càng đậm thì nút càng thuần nhất. Nút gốc hỏi hành khách có danh xưng Mr hay không. Nhánh bên trái — phụ nữ và trẻ em, 300 mẫu — tiếp tục tách theo hạng vé: hạng 1–2 gần như đều sống (138 trên 145 ở một nút con), còn hạng 3 được tách theo gia đình lớn. Nhánh bên phải — nam trưởng thành, 412 mẫu — chủ yếu là không sống, và được tách tiếp theo giá vé và tuổi.
 
 ## Phần 4 — Kết quả và kết luận
 
-### Slide 25 — Mở phần Kết quả (Điều phối, ~5s)
+### Slide 26 — Mở phần Kết quả (Điều phối, ~5s)
 Bây giờ chúng ta đặt bốn mô hình cạnh nhau.
 
-### Slide 26 — So sánh (~60s)
+### Slide 27 — So sánh (~60s)
 Trên cùng tập validation 179 hành khách, SVM dẫn đầu với accuracy 0,844, cùng precision và F1 cao nhất. Logistic Regression đứng thứ hai với 0,838 và ROC-AUC cao nhất. Decision Tree có CV cao nhất, còn Extra Trees giảm overfit mạnh nhất. Tất cả đều vượt xa mô hình dummy luôn đoán "không sống sót", chỉ đạt 0,615. Biểu đồ cột cắt trục từ 0,80 để thấy rõ khác biệt — thực tế khác biệt rất nhỏ.
 
-### Slide 27 — Confusion matrix (~50s)
+### Slide 28 — Confusion matrix (~50s)
 Bốn confusion matrix cho thấy các mô hình sai ở cùng một chỗ. Số người sống bị bỏ sót luôn từ 17 đến 19, nhiều hơn số báo động nhầm, từ 11 đến 13. Lớp sống sót là lớp thiểu số và có nhiều ngoại lệ, ví dụ nam hạng 1 vẫn sống sót, nên khó đoán bằng feature hiện có. SVM chỉ hơn các mô hình khác một đến hai hành khách.
 
-### Slide 28 — Ba điều rút ra (~60s)
+### Slide 29 — Ba điều rút ra (~60s)
 Chúng em rút ra ba điều. Thứ nhất, toàn bộ khác biệt chỉ khoảng hai mẫu, trong khi độ lệch chuẩn của cross-validation còn lớn hơn khoảng cách đó. Thứ hai, không mô hình nào vượt recall 0,754 — giới hạn nằm ở thông tin trong feature chứ không ở thuật toán. Thứ ba, mọi mô hình đều đồng thuận về các tín hiệu quan trọng nhất: giới tính, hạng vé và quy mô gia đình — khớp với nguyên tắc "phụ nữ và trẻ em trước".
 
-### Slide 29 — Kết luận (~50s)
+### Slide 30 — Kết luận (~50s)
 Nhóm chọn SVM kernel RBF với C bằng 100 và gamma 0,001 làm mô hình cuối, vì có accuracy, precision và F1 cao nhất cùng thời gian tuning ngắn. Logistic Regression là lựa chọn tốt khi cần giải thích bằng hệ số; Decision Tree khi cần bộ luật dễ đọc. Bài học lớn nhất: pipeline chung và data contract giúp bốn người làm song song mà kết quả vẫn so sánh công bằng, và feature engineering đóng góp nhiều hơn việc chọn thuật toán.
 
-### Slide 30 — Hạn chế và hướng phát triển (~50s)
+### Slide 31 — Hạn chế và hướng phát triển (~50s)
 Về hạn chế: tập validation chỉ 179 mẫu, mỗi mẫu tương đương 0,56% accuracy, nên kết quả có độ bất định cao. Tuning chỉ theo accuracy nên chưa tối ưu cho recall. Importance dựa trên Gini bị thiên lệch, và chưa kiểm chứng trên leaderboard Kaggle. Hướng phát triển gồm repeated cross-validation kèm kiểm định thống kê, ensemble bốn mô hình, dùng SHAP để giải thích, tạo thêm feature từ Ticket và Cabin, và hạ ngưỡng quyết định để giảm bỏ sót người sống.
 
-### Slide 31 — Cảm ơn (~10s)
+### Slide 32 — Cảm ơn (~10s)
 Phần trình bày của nhóm đến đây là kết thúc. Cảm ơn thầy cô và các bạn đã lắng nghe; nhóm xin nhận câu hỏi.
 
 ---

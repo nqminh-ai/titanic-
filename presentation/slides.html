@@ -144,6 +144,10 @@ tr.best td{background:#FBEFD2;font-weight:700}
 .vbars .vgrow{width:100%}
 .vlab{display:flex;gap:22px;padding:8px 6px 0;font-size:15px;color:var(--steel);text-align:center}
 .vlab span{flex:1}
+.zoombox .zwrap{flex:1;min-height:0;overflow:hidden;background:#fff;border:1px solid var(--line);cursor:zoom-in}
+.zoombox .zwrap img{width:100%;height:100%;object-fit:contain;border:0;padding:4px;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+.zoombox .zwrap.z{cursor:zoom-out}
+.zoombox .zwrap.z img{transform:scale(2.5)}
 nav{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:9;opacity:0;transition:opacity .3s}
 body:hover nav{opacity:1}
 nav button{width:8px;height:8px;border:0;background:var(--steel);cursor:pointer}
@@ -683,8 +687,13 @@ button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
       <div class="hbar r" style="--d:11"><span>Age</span><div class="tr"><div class="fl grow" style="--w:4.9%;--d:11"></div></div><b>0,05</b></div>
       <p class="r" style="--d:12;font-size:18px;margin-top:6px">Gap train–CV giảm <b>0,196 → 0,036</b>. Sex có importance 0 vì Title_Mr đã tách trước.</p>
     </div>
-    <div class="col"><div class="fig r s" style="--d:7"><img src="../reports/figures/decision_tree/best_tree_first_3_levels.png" alt="Ba tầng đầu của cây"><span>Ba tầng đầu của cây tối ưu</span></div></div>
+    <div class="col"><div class="fig r s" style="--d:7"><img src="../reports/figures/decision_tree/learning_curve.png" alt="Learning curve Decision Tree"><span>Learning curve — cây tối ưu</span></div></div>
   </div>
+</section>
+
+<section class="slide" data-sec="Decision Tree · Đỗ Trường Sơn · Kết quả" style="padding:40px 60px 60px">
+  <div class="mhead r" style="margin-bottom:14px"><h2 style="font-size:48px">Ba tầng đầu của cây tối ưu</h2><span class="who">Đỗ Trường Sơn · Decision Tree</span></div>
+  <div class="fig r s zoombox" style="--d:1"><div class="zwrap"><img id="treeimg" src="assets/dt_tree_3_levels.png" alt="Ba tầng đầu của cây quyết định tối ưu"></div><span>Nhấn vào vị trí bất kỳ trên cây để phóng to 2,5× tại đó, nhấn lần nữa để thu nhỏ · xanh = nghiêng về sống, cam = nghiêng về không sống</span></div>
 </section>
 
 <section class="slide sec" data-sec="Kết quả"><div class="grid-bg"></div><div class="big">04</div>
@@ -804,6 +813,7 @@ function go(k){i=Math.max(0,Math.min(S.length-1,k));S.forEach((el,n)=>{if(n===i)
  [...nav.children].forEach((b,n)=>b.classList.toggle('on',n===i));prog.style.width=((i+1)/S.length*100)+'%';
  S[i].querySelectorAll('[data-count]').forEach(count);try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
 addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();go(i+1)}else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();go(i-1)}else if(e.key==='Home')go(0);else if(e.key==='End')go(S.length-1);else if(e.key==='f'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen().catch(()=>{})}});
+document.querySelectorAll('.zwrap').forEach(w=>w.addEventListener('click',e=>{e.stopPropagation();const img=w.querySelector('img');if(!w.classList.contains('z')){const r=w.getBoundingClientRect();img.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%'}w.classList.toggle('z')}));
 addEventListener('click',e=>{if(e.target.closest('nav'))return;go(e.clientX>innerWidth/2?i+1:i-1)});
 addEventListener('hashchange',()=>{const n=parseInt(location.hash.slice(1));if(n&&n-1!==i)go(n-1)});
 go((parseInt(location.hash.slice(1))||1)-1);
