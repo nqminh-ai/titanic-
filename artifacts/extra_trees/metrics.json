@@ -1,0 +1,32 @@
+{
+  "model_name": "ExtraTreesClassifier",
+  "random_state": 42,
+  "cv_folds": 10,
+  "baseline_cv_mean": 0.7837050078247262,
+  "baseline_cv_std": 0.027590628174195685,
+  "best_cv_score": 0.8370500782472614,
+  "best_cv_mean": 0.8370500782472614,
+  "best_cv_std": 0.03528129447715863,
+  "best_params": {
+    "class_weight": null,
+    "criterion": "gini",
+    "max_depth": 8,
+    "max_features": "log2",
+    "min_samples_leaf": 4,
+    "min_samples_split": 10,
+    "n_estimators": 300
+  },
+  "tuning_seconds": 283.39,
+  "baseline_validation": {
+    "accuracy": 0.7932960893854749,
+    "precision": 0.7424242424242424,
+    "recall": 0.7101449275362319,
+    "f1": 0.725925925925926,
+    "roc_auc": 0.8024374176548089
+  },
+  "validation_accuracy": 0.8324022346368715,
+  "validation_precision": 0.819672131147541,
+  "validation_recall": 0.7246376811594203,
+  "validation_f1": 0.7692307692307693,
+  "validation_roc_auc": 0.854216073781291
+}
