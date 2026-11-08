@@ -1,62 +1,135 @@
 # Script thuyết trình — Titanic Survival Classification
 
-Tổng thời lượng dự kiến: ~15 phút (17 slide). Gợi ý người nói: Điều phối (slide 1–8, 13–17), Thành viên 1–4 (slide 9–12, mỗi người ~1,5 phút).
+**Thời lượng dự kiến:** khoảng 22–25 phút cho 31 slide.
+**Phân công người nói:**
+- Điều phối: slide 1–12 và 25–31
+- Nguyễn Tấn Dũng: slide 13–15
+- Nguyễn Trọng Hiệp: slide 16–18
+- Nguyễn Quang Minh: slide 19–21
+- Đỗ Trường Sơn: slide 22–24
+
+**Điều khiển slide:** phím → hoặc Space để sang slide, ← để quay lại, F để toàn màn hình. Các hiệu ứng tự chạy khi vào slide; nên đợi khoảng 1–2 giây cho biểu đồ hiện hết rồi mới nói vào số liệu.
 
 ---
 
-## Slide 1 — Trang bìa (Điều phối, ~30s)
-Xin chào thầy cô và các bạn. Nhóm chúng em xin trình bày dự án Mini Capstone với câu hỏi: ai sống sót trên Titanic? Chúng em xây dựng bốn mô hình phân loại — Logistic Regression, Extra Trees, SVM và Decision Tree — mỗi thành viên phụ trách một mô hình, và tất cả dùng chung một pipeline dữ liệu để so sánh công bằng.
+## Phần mở đầu
 
-## Slide 2 — Nội dung trình bày (~20s)
-Bài trình bày gồm bảy phần: giới thiệu bài toán, kiểm tra dữ liệu và EDA, tiền xử lý và feature engineering, data contract dùng chung, bốn mô hình, so sánh kết quả, cuối cùng là kết luận cùng hướng phát triển.
+### Slide 1 — Trang bìa (Điều phối, ~30s)
+Xin chào thầy cô và các bạn. Nhóm chúng em xin trình bày dự án Mini Capstone với câu hỏi: ai sống sót trên Titanic? Chúng em xây dựng bốn mô hình phân loại — Logistic Regression, Extra Trees, SVM và Decision Tree. Mỗi thành viên phụ trách một mô hình, và cả bốn dùng chung một pipeline dữ liệu để so sánh công bằng.
 
-## Slide 3 — Bài toán (~50s)
-Dữ liệu gồm 891 hành khách có nhãn và 418 hành khách cần dự đoán trên Kaggle. Đây là bài toán phân loại nhị phân: Survived bằng 0 hoặc 1. Chỉ 38,4% hành khách sống sót — 549 người mất và 342 người sống — nên dữ liệu lệch lớp nhẹ. Mục tiêu của nhóm không chỉ là accuracy cao, mà là một quy trình tái lập được để bốn mô hình được so sánh trên cùng dữ liệu, cùng cách chia và cùng bộ metric.
+### Slide 2 — Lộ trình trình bày (~20s)
+Bài trình bày có bốn phần. Đầu tiên là giới thiệu bài toán và cách nhóm tổ chức. Thứ hai là dữ liệu và EDA. Thứ ba — phần chính — là bốn mô hình; mỗi mô hình gồm lý thuyết, cách triển khai và kết quả. Cuối cùng là so sánh và kết luận.
 
-## Slide 4 — Data audit (~50s)
-Có ba cột bị thiếu dữ liệu. Cabin thiếu 77% nên chúng em loại bỏ. Age thiếu 20%, được điền bằng median theo nhóm giới tính và hạng vé, vì tuổi khác nhau rõ giữa các nhóm này. Embarked thiếu hai giá trị, điền bằng mode là S. Mọi thống kê dùng để điền chỉ học từ tập train, tránh rò rỉ dữ liệu. Không có bản ghi trùng, và PassengerId không được dùng làm feature.
+## Phần 1 — Giới thiệu
 
-## Slide 5 — EDA (~60s)
-Hai yếu tố mạnh nhất là giới tính và hạng vé. Nữ có tỷ lệ sống 74%, nam chỉ 19%. Hạng 1 sống sót 63%, hạng 3 chỉ 24%. Cảng Cherbourg có tỷ lệ sống cao hơn, nhưng chủ yếu vì có nhiều khách hạng 1 lên tàu ở đó. Trẻ em và gia đình nhỏ có lợi thế, còn gia đình từ năm người trở lên có tỷ lệ sống rất thấp.
+### Slide 3 — Mở phần Giới thiệu (~5s)
+Chúng ta bắt đầu với phần giới thiệu dự án.
 
-## Slide 6 — EDA đa biến (~40s)
-Khi kết hợp giới tính và hạng vé, phụ nữ hạng 1 và 2 gần như đều sống sót, còn nam hạng 3 có cơ hội thấp nhất. Heatmap tương quan cho thấy Sex, Pclass và Fare liên quan mạnh với Survived. Chúng em lưu ý tương quan không đồng nghĩa với nhân quả.
+### Slide 4 — Bài toán (~50s)
+Dữ liệu gồm 891 hành khách có nhãn và 418 hành khách cần dự đoán trên Kaggle. Mỗi hành khách có 11 cột thông tin gốc như hạng vé, giới tính, tuổi, giá vé và họ tên. Chỉ 38,4% hành khách sống sót, nên dữ liệu lệch lớp nhẹ. Đây là bài toán phân loại nhị phân. Mục tiêu của nhóm không chỉ là đạt accuracy cao, mà là xây dựng một quy trình tái lập được, để bốn mô hình được so sánh trên cùng dữ liệu, cùng cách chia và cùng bộ metric.
 
-## Slide 7 — Pipeline dữ liệu (~60s)
-Pipeline chung gồm bảy bước, từ đọc dữ liệu đến xuất artifacts. Chúng em trích Title từ tên — Mr, Miss, Mrs, Master và Rare; tạo FamilySize và nhóm thành bốn loại gia đình; tạo AgeBand và FareBand theo ngưỡng phân vị học từ train. Kết quả là 28 feature sạch. Pipeline chung không scale dữ liệu; Logistic Regression và SVM tự scale bên trong Pipeline để scaler chỉ fit trên training fold.
+### Slide 5 — Tổ chức nhóm (~45s)
+Nhóm làm theo hai giai đoạn. Ở giai đoạn A, phần chung xử lý toàn bộ dữ liệu — audit, EDA, feature engineering, chia dữ liệu — rồi xuất ra thư mục artifacts/common. Ở giai đoạn B, bốn thành viên làm song song: mỗi người chỉ đọc từ artifacts/common và chỉ ghi vào thư mục của mình. Nhờ vậy không ai xung đột với ai, và khi tích hợp, kết quả so sánh được trực tiếp.
 
-## Slide 8 — Data contract (~50s)
-Đây là luật chơi chung: random seed 42, chia 712 mẫu train và 179 mẫu validation có stratify, cross-validation 10-fold phân tầng, và accuracy là metric chính khi tuning. Mọi mô hình phải báo cáo thêm precision, recall, F1, ROC-AUC và confusion matrix. Mỗi thành viên theo cùng quy trình: baseline, cross-validation, GridSearch, đánh giá hold-out, learning curve, refit trên toàn bộ dữ liệu rồi tạo submission. Xin mời các thành viên trình bày phần mô hình của mình.
+## Phần 2 — Dữ liệu và EDA
 
-## Slide 9 — Logistic Regression (Thành viên 1, ~80s)
-Em phụ trách Logistic Regression. Pipeline gồm StandardScaler và LogisticRegression, scaler đặt trong Pipeline nên chỉ fit trên training fold. Em thử 26 cấu hình với C, penalty L1/L2 và class_weight; tuning chỉ mất khoảng 2 giây. Cấu hình tốt nhất là penalty L1 với C bằng 0,1 — L1 đưa hơn mười hệ số về 0, tức mô hình tự chọn feature. CV tăng từ 0,822 lên 0,827 với độ lệch chuẩn thấp nhất nhóm, validation accuracy 0,838 và ROC-AUC 0,872 — cao nhất trong bốn mô hình. Nhìn vào hệ số: Sex có hệ số dương lớn nhất, Pclass âm — hạng vé càng thấp cơ hội càng giảm — còn gia đình lớn và danh xưng Mr đều làm giảm khả năng sống sót.
+### Slide 6 — Mở phần Dữ liệu (~5s)
+Tiếp theo là dữ liệu và phân tích khám phá.
 
-## Slide 10 — Extra Trees (Thành viên 2, ~80s)
-Em phụ trách Extra Trees. Baseline overfit rõ: train accuracy 0,985 nhưng CV chỉ 0,784. Em tuning theo hướng coarse-to-fine, 144 rồi 27 cấu hình, khoảng 283 giây. Cấu hình tốt nhất là 300 cây, độ sâu tối đa 8, max_features log2, min_samples_leaf 4. CV tăng lên 0,837, validation 0,832, precision 0,820. Feature quan trọng nhất là Title_Mr, Sex và Pclass — khớp với EDA.
+### Slide 7 — Data audit (~50s)
+Có ba cột bị thiếu dữ liệu. Cabin thiếu 77%, quá nhiều để điền tin cậy, nên chúng em loại bỏ. Age thiếu gần 20%, được điền bằng median theo nhóm giới tính và hạng vé, vì tuổi khác nhau rõ giữa các nhóm này. Embarked chỉ thiếu 2 dòng, điền bằng mode là S; Fare thiếu 1 dòng ở tập test, điền bằng median. Mọi thống kê dùng để điền chỉ học từ tập train, để tránh rò rỉ dữ liệu.
 
-## Slide 11 — SVM (Thành viên 3, ~80s)
-Em phụ trách SVM. Pipeline gồm StandardScaler và SVC. Grid dạng list-of-dicts để không tìm gamma cho kernel tuyến tính. Cấu hình tốt nhất là kernel RBF với C bằng 100 và gamma 0,001 — gamma nhỏ cho biên quyết định mượt. SVM đạt validation accuracy 0,844, precision 0,825 và F1 0,788, đều cao nhất nhóm. Mô hình dùng 287 support vector và tuning chỉ mất khoảng 41 giây.
+### Slide 8 — Giới tính, hạng vé và danh xưng (~60s)
+Bảng bên trái cho thấy hai yếu tố mạnh nhất. Phụ nữ hạng 1 sống sót 97%, hạng 2 là 92%; trong khi nam hạng 2 và hạng 3 chỉ khoảng 15%. Bên phải là tỷ lệ sống theo danh xưng trích từ tên. Mrs và Miss sống trên 70%, Mr chỉ 16%. Điểm thú vị là Master — tức bé trai — sống sót 58%, gần gấp bốn lần Mr. Vì vậy Title mang thông tin cả về giới tính lẫn độ tuổi, điều mà riêng cột Sex không có.
 
-## Slide 12 — Decision Tree (Thành viên 4, ~80s)
-Em phụ trách Decision Tree. Em chạy grid lớn nhất: 2.880 cấu hình nhân 10 fold, tức 28.800 lần fit. Cây tốt nhất dùng gini với min_samples_leaf bằng 8, sâu 8 tầng và có 49 lá. CV đạt 0,838, cao nhất nhóm, và khoảng cách train–CV giảm từ 0,196 xuống 0,036, cho thấy overfitting được kiểm soát. Title_Mr chiếm gần một nửa độ quan trọng; câu hỏi đầu tiên của cây chính là hành khách có phải nam trưởng thành hay không.
+### Slide 9 — Gia đình, cảng lên tàu và tương quan (~45s)
+Quy mô gia đình có quan hệ hình chữ U ngược: đi một mình chỉ sống 30%, gia đình 3–4 người sống 61%, nhưng gia đình từ năm người trở lên chỉ còn 16%. Cảng Cherbourg có tỷ lệ sống cao hơn, nhưng chủ yếu vì có nhiều khách hạng 1 lên tàu ở đó. Heatmap bên phải tổng hợp tương quan sau khi mã hóa. Chúng em lưu ý tương quan không đồng nghĩa với nhân quả.
 
-## Slide 13 — So sánh (Điều phối, ~60s)
-Đặt cạnh nhau trên cùng validation split: SVM dẫn đầu với accuracy 0,844 và F1 0,788, Logistic Regression theo sát với 0,838. Extra Trees và Decision Tree cùng đạt 0,832. Tất cả đều vượt xa baseline dummy luôn đoán "không sống sót", chỉ đạt 0,615. Decision Tree có CV cao nhất, Logistic Regression có ROC-AUC cao nhất.
+### Slide 10 — Feature engineering (~60s)
+Từ những quan sát trên, chúng em tạo feature. Từ Name, trích Title và gom các danh xưng hiếm vào nhóm Rare. Từ SibSp và Parch, tạo FamilySize rồi chia thành bốn nhóm gia đình. Age và Fare được giữ giá trị gốc và thêm các band theo phân vị. Sex được mã hóa nhị phân, Embarked được one-hot. Ticket và Cabin bị loại. Kết quả là 28 feature, không còn giá trị thiếu, và train với test có cùng thứ tự cột. Phần chung không scale dữ liệu; Logistic Regression và SVM tự scale bên trong Pipeline của mình.
 
-## Slide 14 — Đọc kết quả (~60s)
-Ba điểm cần nhấn mạnh. Thứ nhất, bốn mô hình chỉ cách nhau 0 đến 2 mẫu trên 179, nhỏ hơn độ lệch chuẩn cross-validation. Thứ hai, recall là điểm yếu chung: mọi mô hình bỏ sót 17 đến 19 người sống sót. Thứ ba, các feature quan trọng nhất nhất quán giữa các mô hình và khớp với nguyên tắc "phụ nữ và trẻ em trước".
+### Slide 11 — Data contract (~50s)
+Đây là luật chơi chung cho cả bốn mô hình: random seed 42; chia 712 mẫu train và 179 mẫu validation có stratify; cross-validation 10-fold phân tầng; và accuracy là metric chính khi tuning. Mỗi thành viên phải đi qua đúng tám bước, từ đọc artifacts đến xuất submission. Tập test Kaggle không bao giờ được dùng để chọn mô hình.
 
-## Slide 15 — Kết luận (~50s)
-Nhóm chọn SVM kernel RBF làm mô hình cuối vì có accuracy, precision và F1 cao nhất cùng thời gian tuning ngắn. Logistic Regression đứng thứ hai với ROC-AUC cao nhất và kết quả ổn định nhất, phù hợp khi cần giải thích bằng hệ số; Decision Tree có CV tốt nhất và luật dễ đọc. Bài học lớn nhất: pipeline chung và data contract cho phép bốn người làm song song mà kết quả vẫn so sánh được, và feature engineering đóng góp nhiều hơn việc chọn thuật toán.
+## Phần 3 — Bốn mô hình
 
-## Slide 16 — Hạn chế và hướng phát triển (~50s)
-Hạn chế: tập validation chỉ 179 mẫu nên kết quả có độ bất định; tuning chỉ theo accuracy nên chưa tối ưu ngưỡng cho recall; feature importance dựa trên impurity có thể thiên lệch. Hướng phát triển: so sánh bằng repeated CV, thử ensemble voting hoặc stacking, dùng permutation importance hoặc SHAP, và khai thác thêm feature từ Ticket và Cabin.
+### Slide 12 — Bốn mô hình, bốn cách nhìn (~30s)
+Bốn mô hình được chọn vì đại diện cho bốn cách tiếp cận khác nhau. Logistic Regression là mô hình tuyến tính cho ra xác suất. Extra Trees là ensemble gồm nhiều cây ngẫu nhiên. SVM tìm biên có lề rộng nhất trong không gian kernel. Decision Tree chia dữ liệu bằng chuỗi câu hỏi có hoặc không. Xin mời các thành viên trình bày.
 
-## Slide 17 — Cảm ơn (~10s)
-Phần trình bày của nhóm đến đây là kết thúc. Cảm ơn thầy cô và các bạn đã lắng nghe, nhóm xin nhận câu hỏi.
+### Slide 13 — Logistic Regression: lý thuyết (Nguyễn Tấn Dũng, ~70s)
+Em xin trình bày Logistic Regression. Mô hình tính tổ hợp tuyến tính z bằng w nhân x cộng b, rồi đưa z qua hàm sigmoid để được xác suất từ 0 đến 1. Nếu xác suất lớn hơn 0,5 thì dự đoán là sống sót — chính là đường cong và ngưỡng trên hình. Mô hình học bằng cách tối thiểu log-loss. Em thêm điều chuẩn L1 với hệ số λ bằng 1 chia C; L1 có tính chất ép các hệ số không cần thiết về đúng 0. Ưu điểm lớn nhất là dễ diễn giải: mỗi hệ số là log-odds. Hạn chế là biên quyết định chỉ là tuyến tính, và bắt buộc phải scale dữ liệu.
+
+### Slide 14 — Logistic Regression: triển khai (~60s)
+Pipeline gồm StandardScaler rồi LogisticRegression. Scaler nằm bên trong Pipeline nên chỉ fit trên training fold của mỗi lần cross-validation, tránh rò rỉ thông tin. Em tìm trên lưới gồm C từ 0,001 đến 100, penalty L1 và L2, và class_weight — tổng cộng 26 cấu hình, 260 lần fit, chỉ mất khoảng 2 giây. Cấu hình tốt nhất là L1 với C bằng 0,1. Mô hình hội tụ sau 17 vòng lặp, và 14 trên 28 hệ số bằng 0, nghĩa là L1 đã tự loại một nửa số feature thừa.
+
+### Slide 15 — Logistic Regression: kết quả (~60s)
+So với baseline, mọi metric đều tăng. CV đạt 0,827 với độ lệch chuẩn chỉ 0,032 — ổn định nhất nhóm. Validation accuracy 0,838, và ROC-AUC 0,872, cao nhất trong bốn mô hình. Nhìn vào hệ số: giới tính nữ có hệ số dương lớn nhất, odds sống tăng 2,26 lần mỗi độ lệch chuẩn. Pclass, gia đình lớn và danh xưng Mr đều làm giảm khả năng sống. Learning curve cho thấy train và CV hội tụ quanh 0,83, khoảng cách cuối chỉ 0,005, nên mô hình không bị overfit.
+
+### Slide 16 — Extra Trees: lý thuyết (Nguyễn Trọng Hiệp, ~70s)
+Em xin trình bày Extra Trees, tức Extremely Randomized Trees. Đây là ensemble gồm nhiều cây quyết định; mỗi cây cho một xác suất, và kết quả cuối là trung bình của tất cả các cây — như trên hình, bốn cây cho 0,82, 0,71, 0,38 và 0,77, trung bình 0,67 nên dự đoán là sống. Khác với Random Forest, Extra Trees dùng toàn bộ dữ liệu cho mỗi cây thay vì bootstrap, và chọn ngưỡng chia ngẫu nhiên thay vì tìm ngưỡng tối ưu. Sự ngẫu nhiên này làm variance giảm hơn nữa và huấn luyện nhanh hơn. Hạn chế là khó diễn giải hơn một cây đơn, và cây sâu vẫn dễ overfit nếu không giới hạn.
+
+### Slide 17 — Extra Trees: triển khai (~60s)
+Lưới đầy đủ có 1.296 cấu hình, quá lớn để chạy với 10-fold. Vì vậy em tuning theo hướng coarse-to-fine: chạy 144 cấu hình thô trong 248 giây, rồi thu hẹp quanh vùng tốt nhất với 27 cấu hình trong 35 giây. Grid fine xác nhận lại cấu hình của grid coarse: 300 cây, độ sâu tối đa 8, max_features log2, mỗi lá ít nhất 4 mẫu, mỗi lần chia cần ít nhất 10 mẫu. Mô hình cây không cần scale. Ba tham số giới hạn độ phức tạp là chìa khóa chống overfit.
+
+### Slide 18 — Extra Trees: kết quả (~60s)
+Extra Trees là mô hình cải thiện nhiều nhất sau tuning: CV tăng từ 0,784 lên 0,837, precision tăng 0,077. Biểu đồ bên trái cho thấy lý do: baseline đạt 0,986 trên train nhưng chỉ 0,784 trên CV, tức overfit nặng. Sau khi giới hạn độ sâu, khoảng cách chỉ còn 0,02. Feature quan trọng nhất là Title_Mr, Sex và Pclass, khớp với EDA. Điểm yếu là recall 0,725, thấp nhất nhóm.
+
+### Slide 19 — SVM: lý thuyết (Nguyễn Quang Minh, ~70s)
+Em xin trình bày Support Vector Machine. SVM tìm siêu phẳng phân tách hai lớp sao cho lề — dải vàng trên hình — rộng nhất. Chỉ những điểm nằm trên mép lề, gọi là support vector, quyết định vị trí của biên. Bài toán tối ưu gồm hai phần: tối thiểu một phần hai bình phương chuẩn w để lề rộng, cộng C nhân tổng sai số để phạt các điểm vi phạm lề. C lớn thì biên cứng hơn. Để có biên phi tuyến, em dùng kernel RBF đo độ giống nhau giữa hai điểm; gamma nhỏ thì vùng ảnh hưởng rộng và biên mượt. Hạn chế: SVM bắt buộc scale và rất nhạy với C và gamma.
+
+### Slide 20 — SVM: triển khai (~60s)
+Pipeline gồm StandardScaler rồi SVC. Em dùng grid dạng list-of-dicts: kernel RBF được thử với C và gamma, còn kernel linear chỉ thử C, vì gamma không có ý nghĩa với kernel tuyến tính. Tổng cộng 66 cấu hình, mất 41 giây. Heatmap bên phải cho thấy đỉnh 0,830 nằm ở gamma bằng 0,001 và C bằng 100: kernel mượt nhưng phạt vi phạm nghiêm. Ngược lại, gamma lớn với C nhỏ làm accuracy tụt còn khoảng 0,63. Kernel linear tốt nhất đạt khoảng 0,826, nên RBF nhỉnh hơn.
+
+### Slide 21 — SVM: kết quả (~60s)
+SVM đạt validation accuracy 0,844, precision 0,825 và F1 0,788 — cả ba đều cao nhất nhóm. Số support vector giảm từ 346 xuống 287, nghĩa là biên đơn giản hơn và tổng quát tốt hơn. Learning curve cho thấy train khoảng 85–86%, CV khoảng 83%, khoảng cách chỉ 2,5%. Trên tập test, mô hình dự đoán 39% hành khách sống sót, rất sát tỷ lệ thực 38,4%.
+
+### Slide 22 — Decision Tree: lý thuyết (Đỗ Trường Sơn, ~70s)
+Em xin trình bày Decision Tree. Cây đưa ra một chuỗi câu hỏi có hoặc không, ví dụ: hành khách có danh xưng Mr không, hạng vé có phải hạng 3 không… cho đến khi đến một lá và đưa ra dự đoán. Sơ đồ trên hình chỉ là minh họa. Ở mỗi nút, cây chọn feature và ngưỡng làm giảm độ lẫn lộn Gini nhiều nhất. Gini bằng 0 khi nút chỉ còn một lớp. Ưu điểm là dễ đọc như một bộ luật, không cần scale. Nhược điểm là rất dễ overfit nếu để cây mọc tự do, và không ổn định khi dữ liệu thay đổi nhẹ.
+
+### Slide 23 — Decision Tree: triển khai (~60s)
+Vì một cây fit rất nhanh, em chạy grid lớn nhất nhóm: 2.880 cấu hình nhân 10 fold, tức 28.800 lần fit, mất khoảng 250 giây. Cấu hình tốt nhất không giới hạn độ sâu, nhưng mỗi lá phải có ít nhất 8 mẫu, nên cây tự dừng ở độ sâu 8 với 49 lá. Khi refit trên toàn bộ 891 mẫu, cây sâu 11 tầng và có 66 lá.
+
+### Slide 24 — Decision Tree: kết quả (~60s)
+Decision Tree có CV cao nhất nhóm, 0,838. Khoảng cách train–CV giảm từ 0,196 xuống 0,036, cho thấy overfit được kiểm soát. Riêng Title_Mr chiếm gần một nửa độ quan trọng, sau đó là Fare và Pclass. Sex có importance bằng 0 không phải vì giới tính không quan trọng, mà vì Title_Mr đã tách giới tính ngay từ nút gốc. Đây là hạn chế của importance dựa trên Gini. Hình bên phải là ba tầng đầu của cây thật.
+
+## Phần 4 — Kết quả và kết luận
+
+### Slide 25 — Mở phần Kết quả (Điều phối, ~5s)
+Bây giờ chúng ta đặt bốn mô hình cạnh nhau.
+
+### Slide 26 — So sánh (~60s)
+Trên cùng tập validation 179 hành khách, SVM dẫn đầu với accuracy 0,844, cùng precision và F1 cao nhất. Logistic Regression đứng thứ hai với 0,838 và ROC-AUC cao nhất. Decision Tree có CV cao nhất, còn Extra Trees giảm overfit mạnh nhất. Tất cả đều vượt xa mô hình dummy luôn đoán "không sống sót", chỉ đạt 0,615. Biểu đồ cột cắt trục từ 0,80 để thấy rõ khác biệt — thực tế khác biệt rất nhỏ.
+
+### Slide 27 — Confusion matrix (~50s)
+Bốn confusion matrix cho thấy các mô hình sai ở cùng một chỗ. Số người sống bị bỏ sót luôn từ 17 đến 19, nhiều hơn số báo động nhầm, từ 11 đến 13. Lớp sống sót là lớp thiểu số và có nhiều ngoại lệ, ví dụ nam hạng 1 vẫn sống sót, nên khó đoán bằng feature hiện có. SVM chỉ hơn các mô hình khác một đến hai hành khách.
+
+### Slide 28 — Ba điều rút ra (~60s)
+Chúng em rút ra ba điều. Thứ nhất, toàn bộ khác biệt chỉ khoảng hai mẫu, trong khi độ lệch chuẩn của cross-validation còn lớn hơn khoảng cách đó. Thứ hai, không mô hình nào vượt recall 0,754 — giới hạn nằm ở thông tin trong feature chứ không ở thuật toán. Thứ ba, mọi mô hình đều đồng thuận về các tín hiệu quan trọng nhất: giới tính, hạng vé và quy mô gia đình — khớp với nguyên tắc "phụ nữ và trẻ em trước".
+
+### Slide 29 — Kết luận (~50s)
+Nhóm chọn SVM kernel RBF với C bằng 100 và gamma 0,001 làm mô hình cuối, vì có accuracy, precision và F1 cao nhất cùng thời gian tuning ngắn. Logistic Regression là lựa chọn tốt khi cần giải thích bằng hệ số; Decision Tree khi cần bộ luật dễ đọc. Bài học lớn nhất: pipeline chung và data contract giúp bốn người làm song song mà kết quả vẫn so sánh công bằng, và feature engineering đóng góp nhiều hơn việc chọn thuật toán.
+
+### Slide 30 — Hạn chế và hướng phát triển (~50s)
+Về hạn chế: tập validation chỉ 179 mẫu, mỗi mẫu tương đương 0,56% accuracy, nên kết quả có độ bất định cao. Tuning chỉ theo accuracy nên chưa tối ưu cho recall. Importance dựa trên Gini bị thiên lệch, và chưa kiểm chứng trên leaderboard Kaggle. Hướng phát triển gồm repeated cross-validation kèm kiểm định thống kê, ensemble bốn mô hình, dùng SHAP để giải thích, tạo thêm feature từ Ticket và Cabin, và hạ ngưỡng quyết định để giảm bỏ sót người sống.
+
+### Slide 31 — Cảm ơn (~10s)
+Phần trình bày của nhóm đến đây là kết thúc. Cảm ơn thầy cô và các bạn đã lắng nghe; nhóm xin nhận câu hỏi.
 
 ---
-### Câu hỏi có thể gặp
-- **Vì sao không chọn mô hình có CV cao nhất?** CV của Decision Tree (0,838) và SVM (0,830) chênh nhau ít hơn độ lệch chuẩn; SVM tốt hơn trên hold-out ở hầu hết metric. Cả hai đều là lựa chọn hợp lý.
-- **Vì sao mô hình cây không cần scale?** Cây chia theo ngưỡng nên không phụ thuộc thang đo.
-- **Có rò rỉ dữ liệu không?** Mọi thống kê điền thiếu và ngưỡng band học từ train; scaler nằm trong Pipeline nên chỉ fit trên training fold.
+
+## Câu hỏi có thể gặp
+
+- **Vì sao không chọn Decision Tree, mô hình có CV cao nhất?**
+  CV của Decision Tree (0,838) và SVM (0,830) chênh nhau ít hơn độ lệch chuẩn. SVM tốt hơn trên hold-out ở hầu hết metric và ổn định hơn: độ lệch chuẩn CV là 0,032 so với 0,040. Cả hai đều là lựa chọn hợp lý.
+
+- **Vì sao Logistic Regression dùng L1 lại tốt hơn L2?**
+  Một số feature trùng lặp thông tin, ví dụ FamilySize với SibSp và Parch, hay các band với giá trị gốc. L1 loại bớt chúng nên mô hình gọn và ổn định hơn. Thực tế L2 với C = 0,01 cũng chỉ kém 0,0014.
+
+- **Vì sao mô hình cây không cần scale?**
+  Cây chia dữ liệu theo ngưỡng của từng feature riêng lẻ, nên thứ tự giá trị mới quan trọng, không phải thang đo.
+
+- **Có rò rỉ dữ liệu không?**
+  Không. Mọi thống kê điền thiếu và ngưỡng band đều học từ train. Scaler nằm trong Pipeline nên chỉ fit trên training fold. Tập test Kaggle không được dùng để chọn mô hình.
+
+- **Làm sao tăng recall?**
+  Có hai cách: hạ ngưỡng quyết định xuống dưới 0,5, hoặc dùng `class_weight="balanced"`. Cả hai đổi một ít precision lấy recall. Grid hiện tại có thử `balanced`, nhưng vì tuning theo accuracy nên cấu hình này không được chọn.
