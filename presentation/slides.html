@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Titanic Survival Classification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--hull:#13294B;--deep:#0C1D36;--ice:#CFE3EA;--paper:#F4F7F8;--signal:#E0A526;--rust:#B5432F;--steel:#5D7286;--line:#C9D4DC}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--deep);font-family:"Be Vietnam Pro",sans-serif;color:var(--hull)}
+.deck{height:100vh;width:100vw;position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;padding:6vh 7vw;display:none;flex-direction:column;background:var(--paper)}
+.slide.on{display:flex}
+.slide.dark{background:var(--hull);color:var(--paper)}
+h1,h2,.num{font-family:"Barlow Condensed",sans-serif;font-weight:700;line-height:.95;letter-spacing:-.01em}
+h1{font-size:clamp(3rem,8.5vw,8.5rem)}
+h2{font-size:clamp(2rem,4.4vw,4rem);margin-bottom:3.5vh;max-width:22ch}
+p,li{font-size:clamp(.95rem,1.35vw,1.3rem);line-height:1.55;max-width:62ch}
+.lead{font-size:clamp(1.1rem,1.8vw,1.7rem);max-width:40ch;margin-top:3vh;opacity:.88}
+.grid{display:grid;gap:3vw;flex:1;min-height:0}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.fig{min-height:0;display:flex;flex-direction:column;gap:1vh}
+.fig img{width:100%;height:100%;min-height:0;object-fit:contain;background:#fff;border:1px solid var(--line)}
+.fig span{font-size:.85rem;color:var(--steel)}
+ul{padding-left:1.1em}li{margin-bottom:1vh}
+.waterline{position:absolute;left:0;right:0;bottom:0;height:34vh;background:var(--ice)}
+.waterline::before{content:"";position:absolute;top:-1px;left:0;right:0;height:3px;background:var(--signal)}
+.title-wrap{position:relative;z-index:1;margin-top:auto;margin-bottom:38vh}
+.cover small{display:block;font-size:1rem;opacity:.7;margin-bottom:2vh}
+.crew{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);gap:2vw;color:var(--hull);margin-top:-30vh}
+.crew b{font-family:"Barlow Condensed",sans-serif;font-size:1.6rem;display:block}
+.stat .num{font-size:clamp(3rem,6vw,6rem);color:var(--hull)}
+.dark .stat .num{color:var(--signal)}
+.stat p{font-size:1rem;opacity:.8}
+table{border-collapse:collapse;width:100%;font-size:clamp(.85rem,1.2vw,1.15rem)}
+th,td{padding:1.2vh .8vw;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--steel)}
+tr.best td{background:#FBF1D9;font-weight:600}
+.flow{display:flex;gap:0;margin:2vh 0 4vh;flex-wrap:wrap}
+.flow div{flex:1;min-width:120px;padding:2vh 1vw;border-top:4px solid var(--hull);font-weight:600;font-size:clamp(.8rem,1.1vw,1.05rem)}
+.flow div:nth-child(odd){border-color:var(--signal)}
+.model-head{display:flex;align-items:baseline;gap:2vw;margin-bottom:3vh}
+.model-head h2{margin:0}
+.owner{color:var(--steel);font-size:1rem}
+.kv{display:grid;grid-template-columns:repeat(5,1fr);gap:1vw;margin-bottom:3vh}
+.kv div{border-left:3px solid var(--signal);padding-left:.8vw}
+.kv b{font-family:"Barlow Condensed",sans-serif;font-size:clamp(1.6rem,2.6vw,2.6rem);display:block}
+.kv span{font-size:.85rem;color:var(--steel)}
+code{font-size:.9em;background:#E3EAEE;padding:.1em .35em}
+.foot{position:absolute;bottom:2.5vh;right:3vw;font-size:.8rem;color:var(--steel);z-index:2}
+.dark .foot{color:var(--ice)}
+nav{position:fixed;bottom:2vh;left:3vw;display:flex;gap:6px;z-index:5}
+nav button{width:10px;height:10px;border:0;background:var(--steel);opacity:.5;cursor:pointer;padding:0}
+nav button.on{background:var(--signal);opacity:1;width:26px}
+button:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.bars{display:flex;flex-direction:column;gap:2.2vh}
+.bar{display:grid;grid-template-columns:9rem 1fr 4rem;align-items:center;gap:1vw;font-weight:500}
+.track{height:2.6vh;background:#E3EAEE;position:relative}
+.fill{height:100%;background:var(--hull)}
+.bar.top .fill{background:var(--signal)}
+.dummy{position:absolute;top:-.6vh;bottom:-.6vh;width:2px;background:var(--rust)}
+@media (max-width:760px){.g2,.g3,.g4,.crew,.kv{grid-template-columns:1fr 1fr}.slide{padding:5vh 5vw;overflow:auto}}
+@media print{.slide{display:flex;position:relative;height:100vh;page-break-after:always}nav{display:none}}
+</style></head><body>
+<div class="deck" id="deck">
+
+<section class="slide dark cover">
+  <div class="title-wrap"><small>Mini Capstone · Nhóm AIL</small>
+  <h1>Ai sống sót<br>trên Titanic?</h1>
+  <p class="lead">So sánh bốn mô hình phân loại trên cùng một pipeline dữ liệu.</p></div>
+  <div class="waterline"></div>
+  <div class="crew" style="margin-top:0;position:absolute;left:7vw;right:7vw;bottom:9vh">
+    <div><b>Logistic Regression</b>Thành viên 1</div><div><b>Extra Trees</b>Thành viên 2</div>
+    <div><b>SVM</b>Thành viên 3</div><div><b>Decision Tree</b>Thành viên 4</div></div>
+</section>
+
+<section class="slide">
+  <h2>Nội dung trình bày</h2>
+  <div class="grid g2" style="flex:0">
+  <ol style="padding-left:1.2em">
+    <li>Giới thiệu bài toán và dữ liệu</li><li>Kiểm tra chất lượng dữ liệu và EDA</li><li>Tiền xử lý và feature engineering</li><li>Data contract dùng chung</li></ol>
+  <ol start="5" style="padding-left:1.2em">
+    <li>Bốn mô hình: LR, Extra Trees, SVM, Decision Tree</li><li>So sánh kết quả</li><li>Kết luận, hạn chế và hướng phát triển</li></ol></div>
+</section>
+
+<section class="slide">
+  <h2>Bài toán: dự đoán Survived từ hồ sơ hành khách</h2>
+  <div class="grid g3" style="flex:0;margin-bottom:5vh">
+    <div class="stat"><div class="num">891</div><p>hành khách có nhãn (train), 418 cần dự đoán (test Kaggle)</p></div>
+    <div class="stat"><div class="num">38,4%</div><p>tỷ lệ sống sót — dữ liệu lệch lớp nhẹ (549 / 342)</p></div>
+    <div class="stat"><div class="num">4</div><p>mô hình, mỗi thành viên đảm nhận một mô hình</p></div></div>
+  <p>Phân loại nhị phân: <code>Survived ∈ {0, 1}</code>. Mục tiêu là xây dựng quy trình ML tái lập được, để bốn mô hình được so sánh công bằng trên cùng dữ liệu, cùng cách chia và cùng bộ metric.</p>
+</section>
+
+<section class="slide">
+  <h2>Data audit: ba cột có dữ liệu thiếu</h2>
+  <div class="grid g2">
+    <div><table><tr><th>Cột</th><th>Thiếu (train)</th><th>Xử lý</th></tr>
+      <tr><td>Cabin</td><td>687 (77%)</td><td>Loại bỏ</td></tr>
+      <tr><td>Age</td><td>177 (20%)</td><td>Median theo Sex × Pclass</td></tr>
+      <tr><td>Embarked</td><td>2</td><td>Mode của train (S)</td></tr>
+      <tr><td>Fare (test)</td><td>1</td><td>Median của train</td></tr></table>
+      <p style="margin-top:3vh">Không có bản ghi trùng, <code>PassengerId</code> là duy nhất và không được dùng làm feature.</p></div>
+    <div class="fig"><img src="../reports/figures/common/01_target_balance.png" alt="Phân bố biến mục tiêu"><span>Phân bố Survived trên tập train</span></div></div>
+</section>
+
+<section class="slide">
+  <h2>EDA: giới tính và hạng vé quyết định nhiều nhất</h2>
+  <div class="grid g2">
+    <div class="fig"><img src="../reports/figures/common/04_survival_by_categories.png" alt="Tỷ lệ sống theo nhóm"><span>Tỷ lệ sống sót theo các biến phân loại</span></div>
+    <div><ul><li>Nữ sống sót <b>74,2%</b>, nam chỉ <b>18,9%</b>.</li>
+      <li>Hạng 1: <b>63,0%</b> · hạng 2: 47,3% · hạng 3: <b>24,2%</b>.</li>
+      <li>Lên tàu ở Cherbourg (C) có tỷ lệ sống 55,4%, cao hơn S (33,7%) — phần lớn do tỷ lệ khách hạng 1.</li>
+      <li>Trẻ em và gia đình nhỏ có lợi thế; gia đình ≥ 5 người sống sót rất thấp.</li></ul></div></div>
+</section>
+
+<section class="slide">
+  <h2>EDA đa biến: Sex × Pclass và tương quan</h2>
+  <div class="grid g2">
+    <div class="fig"><img src="../reports/figures/common/06_multivariate_survival.png" alt="Phân tích đa biến"><span>Sống sót theo Sex × Pclass và Age × Pclass</span></div>
+    <div class="fig"><img src="../reports/figures/common/07_encoded_correlation_heatmap.png" alt="Heatmap tương quan"><span>Heatmap tương quan sau mã hóa (tương quan ≠ nhân quả)</span></div></div>
+</section>
+
+<section class="slide">
+  <h2>Pipeline dữ liệu dùng chung</h2>
+  <div class="flow"><div>Đọc train/test</div><div>Audit & EDA</div><div>Điền thiếu (học từ train)</div><div>Feature engineering</div><div>One-hot encoding</div><div>Hold-out split</div><div>Xuất artifacts</div></div>
+  <div class="grid g2" style="flex:0">
+    <ul><li><b>Title</b> từ Name: Mr, Miss, Mrs, Master, Rare</li>
+      <li><b>FamilySize</b> = SibSp + Parch + 1 → Single / Small / Medium / Large</li>
+      <li><b>AgeBand</b>, <b>FareBand</b>: ngưỡng phân vị học từ train</li>
+      <li>Loại Name, Ticket, Cabin sau khi khai thác</li></ul>
+    <ul><li>Kết quả: <b>28 feature</b>, không còn NaN hay cột object</li>
+      <li>Không scale ở phần chung — LR và SVM scale trong <code>Pipeline</code> riêng để tránh rò rỉ</li>
+      <li>Mọi thành viên đọc trực tiếp <code>artifacts/common/</code></li></ul></div>
+</section>
+
+<section class="slide dark">
+  <h2>Data contract: luật chơi chung cho bốn mô hình</h2>
+  <div class="grid g4" style="flex:0;margin-bottom:5vh">
+    <div class="stat"><div class="num">42</div><p>random seed thống nhất</p></div>
+    <div class="stat"><div class="num">712/179</div><p>train / validation, stratify theo Survived</p></div>
+    <div class="stat"><div class="num">10-fold</div><p>StratifiedKFold, shuffle</p></div>
+    <div class="stat"><div class="num">Accuracy</div><p>metric chính khi tuning</p></div></div>
+  <p>Metric bổ sung: precision, recall, F1, ROC-AUC, confusion matrix. Tập test Kaggle không được dùng để chọn mô hình. Quy trình mỗi mô hình: baseline → 10-fold CV → GridSearchCV → đánh giá hold-out → learning curve → refit trên toàn bộ 891 mẫu → submission.</p>
+</section>
+
+<section class="slide">
+  <div class="model-head"><h2>Logistic Regression</h2><span class="owner">Thành viên 1</span></div>
+  <div class="kv"><div><b>0,827</b><span>CV ± 0,032 (baseline 0,822)</span></div><div><b>0,838</b><span>Validation accuracy</span></div><div><b>0,813</b><span>Precision</span></div><div><b>0,754</b><span>Recall</span></div><div><b>0,872</b><span>ROC-AUC (cao nhất)</span></div></div>
+  <div class="grid g2">
+    <div><ul><li>Pipeline: <code>StandardScaler → LogisticRegression</code>, scaler chỉ fit trên training fold</li>
+      <li>26 cấu hình, tuning chỉ 1,9 giây</li>
+      <li>Best: <b>L1</b>, C=0,1, solver liblinear — L1 đưa 10+ hệ số về 0, tự chọn feature</li>
+      <li>Sex (+0,81) và Pclass (−0,65) ảnh hưởng mạnh nhất; gia đình lớn và Title_Mr giảm cơ hội sống</li></ul></div>
+    <div class="fig"><img src="../reports/figures/logistic_regression/05_coefficients.png" alt="Hệ số Logistic Regression"><span>Hệ số sau chuẩn hóa</span></div></div>
+</section>
+
+<section class="slide">
+  <div class="model-head"><h2>Extra Trees</h2><span class="owner">Thành viên 2</span></div>
+  <div class="kv"><div><b>0,837</b><span>CV ± 0,035 (baseline 0,784)</span></div><div><b>0,832</b><span>Validation accuracy</span></div><div><b>0,820</b><span>Precision</span></div><div><b>0,725</b><span>Recall</span></div><div><b>0,854</b><span>ROC-AUC</span></div></div>
+  <div class="grid g2">
+    <div><ul><li>Tuning coarse-to-fine: 144 + 27 cấu hình, ~283 giây</li>
+      <li>Best: 300 cây, max_depth=8, max_features=log2, min_samples_leaf=4, min_samples_split=10</li>
+      <li>Train–CV gap giảm từ 0,20 xuống ~0,02 sau khi giới hạn độ sâu</li>
+      <li>Top feature: Title_Mr, Sex, Pclass, Title_Miss, Title_Mrs</li></ul></div>
+    <div class="fig"><img src="../reports/figures/extra_trees/feature_importance.png" alt="Feature importance Extra Trees"><span>Feature importance</span></div></div>
+</section>
+
+<section class="slide">
+  <div class="model-head"><h2>Support Vector Machine</h2><span class="owner">Thành viên 3</span></div>
+  <div class="kv"><div><b>0,830</b><span>CV (baseline 0,826)</span></div><div><b>0,844</b><span>Validation accuracy (cao nhất)</span></div><div><b>0,825</b><span>Precision (cao nhất)</span></div><div><b>0,754</b><span>Recall</span></div><div><b>0,866</b><span>ROC-AUC</span></div></div>
+  <div class="grid g2">
+    <div><ul><li>Pipeline: <code>StandardScaler → SVC</code>; grid list-of-dicts cho RBF và linear</li>
+      <li>Best: RBF, C=100, gamma=0,001 — biên mềm, độ rộng kernel lớn</li>
+      <li>287 support vectors (150 / 137) trên 712 mẫu train</li>
+      <li>Tuning nhanh nhất: ~41 giây</li></ul></div>
+    <div class="fig"><img src="../reports/figures/svm/04_hyperparameter_surface.png" alt="Bề mặt siêu tham số SVM"><span>Accuracy CV theo C × gamma</span></div></div>
+</section>
+
+<section class="slide">
+  <div class="model-head"><h2>Decision Tree</h2><span class="owner">Thành viên 4</span></div>
+  <div class="kv"><div><b>0,838</b><span>CV ± 0,040 (cao nhất)</span></div><div><b>0,832</b><span>Validation accuracy</span></div><div><b>0,800</b><span>Precision</span></div><div><b>0,754</b><span>Recall</span></div><div><b>0,860</b><span>ROC-AUC</span></div></div>
+  <div class="grid g2">
+    <div><ul><li>Grid lớn nhất: 2.880 cấu hình × 10 fold = 28.800 lần fit (~250 giây)</li>
+      <li>Best: gini, min_samples_leaf=8 — cây sâu 8, 49 lá</li>
+      <li>Train–CV gap giảm từ 0,196 xuống 0,036: overfitting được kiểm soát</li>
+      <li>Title_Mr chiếm 49% importance, sau đó Fare và Pclass</li></ul></div>
+    <div class="fig"><img src="../reports/figures/decision_tree/best_tree_first_3_levels.png" alt="Ba tầng đầu của cây"><span>Ba tầng đầu của cây tối ưu</span></div></div>
+</section>
+
+<section class="slide">
+  <h2>So sánh trên cùng validation split</h2>
+  <div class="grid g2">
+    <div><table>
+      <tr><th>Mô hình</th><th>CV acc</th><th>Val acc</th><th>Precision</th><th>Recall</th><th>F1</th><th>AUC</th></tr>
+      <tr><td>Logistic Reg.</td><td>0,827</td><td>0,838</td><td>0,813</td><td>0,754</td><td>0,782</td><td>0,872</td></tr>
+      <tr><td>Extra Trees</td><td>0,837</td><td>0,832</td><td>0,820</td><td>0,725</td><td>0,769</td><td>0,854</td></tr>
+      <tr class="best"><td>SVM (RBF)</td><td>0,830</td><td>0,844</td><td>0,825</td><td>0,754</td><td>0,788</td><td>0,866</td></tr>
+      <tr><td>Decision Tree</td><td>0,838</td><td>0,832</td><td>0,800</td><td>0,754</td><td>0,776</td><td>0,860</td></tr>
+      <tr><td>Dummy</td><td>—</td><td>0,615</td><td>0</td><td>0</td><td>0</td><td>0,500</td></tr></table>
+      </div>
+    <div class="bars" aria-label="Validation accuracy">
+      <p style="font-weight:600">Validation accuracy (vạch đỏ: dummy 0,615)</p>
+      <div class="bar"><span>Logistic Reg.</span><div class="track"><div class="fill" style="width:83.8%"></div><i class="dummy" style="left:61.5%"></i></div><span>0,838</span></div>
+      <div class="bar"><span>Extra Trees</span><div class="track"><div class="fill" style="width:83.2%"></div><i class="dummy" style="left:61.5%"></i></div><span>0,832</span></div>
+      <div class="bar top"><span>SVM</span><div class="track"><div class="fill" style="width:84.4%"></div><i class="dummy" style="left:61.5%"></i></div><span>0,844</span></div>
+      <div class="bar"><span>Decision Tree</span><div class="track"><div class="fill" style="width:83.2%"></div><i class="dummy" style="left:61.5%"></i></div><span>0,832</span></div></div></div>
+</section>
+
+<section class="slide">
+  <h2>Đọc kết quả: khác biệt nhỏ hơn độ dao động</h2>
+  <div class="grid g3" style="flex:0">
+    <div><p><b>Chênh lệch ~1%</b><br>Bốn mô hình chỉ cách nhau 0–2 mẫu trên 179. Độ lệch chuẩn CV (0,032–0,040) lớn hơn khoảng cách giữa chúng.</p></div>
+    <div><p><b>Recall là điểm yếu chung</b><br>Mọi mô hình bỏ sót 17–19 trên 69 người sống sót (recall 0,72–0,75) — lớp thiểu số khó hơn.</p></div>
+    <div><p><b>Feature nhất quán</b><br>Sex/Title_Mr và Pclass dẫn đầu ở cả hệ số LR lẫn importance của hai mô hình cây — khớp với EDA về “phụ nữ và trẻ em trước”.</p></div></div>
+</section>
+
+<section class="slide dark">
+  <h2>Kết luận</h2>
+  <ul style="max-width:70ch">
+    <li>Chọn <b>SVM (RBF, C=100, γ=0,001)</b> làm mô hình cuối: accuracy 0,844, F1 0,788, precision cao nhất, tuning nhanh.</li>
+    <li>Logistic Regression (L1) đứng thứ hai: accuracy 0,838, ROC-AUC cao nhất 0,872, CV ổn định nhất — lựa chọn tốt khi cần giải thích bằng hệ số.</li>
+    <li>Decision Tree có CV tốt nhất (0,838) và luật quyết định dễ đọc.</li>
+    <li>Pipeline chung + data contract giúp bốn thành viên làm song song mà kết quả vẫn so sánh được.</li>
+    <li>Feature engineering (Title, FamilySize) đóng góp nhiều hơn việc chọn thuật toán.</li></ul>
+</section>
+
+<section class="slide">
+  <h2>Hạn chế và hướng phát triển</h2>
+  <div class="grid g2" style="flex:0">
+    <div><p><b>Hạn chế</b></p><ul><li>Một hold-out 179 mẫu → kết quả có độ bất định cao</li><li>Chỉ dùng accuracy để tuning, chưa tối ưu ngưỡng cho recall</li><li>Impurity-based importance có thể thiên lệch</li><li>Chưa đánh giá trên leaderboard Kaggle</li></ul></div>
+    <div><p><b>Hướng phát triển</b></p><ul><li>So sánh bằng repeated CV và kiểm định thống kê</li><li>Ensemble: voting / stacking bốn mô hình</li><li>Permutation importance, SHAP để giải thích</li><li>Feature mới: nhóm vé, boong tàu từ Cabin</li></ul></div></div>
+</section>
+
+<section class="slide dark cover">
+  <div class="title-wrap"><h1>Cảm ơn<br>thầy cô và các bạn</h1><p class="lead">Mời đặt câu hỏi.</p></div>
+  <div class="waterline"></div>
+</section>
+</div>
+<nav id="nav" aria-label="Chuyển slide"></nav>
+<script>
+const s=[...document.querySelectorAll('.slide')],nav=document.getElementById('nav');let i=0;
+s.forEach((el,k)=>{const f=document.createElement('div');f.className='foot';f.textContent=(k+1)+' / '+s.length;el.appendChild(f);
+ const b=document.createElement('button');b.setAttribute('aria-label','Slide '+(k+1));b.onclick=()=>go(k);nav.appendChild(b)});
+function go(k){i=Math.max(0,Math.min(s.length-1,k));s.forEach((el,n)=>el.classList.toggle('on',n===i));[...nav.children].forEach((b,n)=>b.classList.toggle('on',n===i));try{history.replaceState(null,'','#'+(i+1))}catch(e){}}
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(i+1)}if(['ArrowLeft','PageUp'].includes(e.key))go(i-1);if(e.key==='Home')go(0);if(e.key==='End')go(s.length-1)});
+document.getElementById('deck').addEventListener('click',e=>{if(e.target.closest('nav'))return;go(e.clientX>innerWidth/2?i+1:i-1)});
+go((parseInt(location.hash.slice(1))||1)-1);
+</script></body></html>
